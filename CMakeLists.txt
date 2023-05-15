@@ -6,7 +6,7 @@ project(CPP_Project
 
 include_directories(src)
 
-enable_testing()
+# enable_testing()
 
 add_subdirectory(src)
 add_subdirectory(tst)

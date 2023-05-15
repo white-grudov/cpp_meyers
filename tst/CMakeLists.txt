@@ -4,8 +4,16 @@ file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES false *.h *.cpp)
 
 set(SOURCES ${TEST_SOURCES})
 
-add_executable(${BINARY} ${TEST_SOURCES})
+enable_testing()
 
-add_test(NAME ${BINARY} COMMAND ${BINARY})
+add_executable(
+    01TypeDeduction-Test
+    01TypeDeduction-Test.cpp
+)
+target_link_libraries(
+    01TypeDeduction-Test
+    GTest::gtest_main
+)
 
-target_link_libraries(${BINARY} PUBLIC ${CMAKE_PROJECT_NAME}_lib gtest)
+include(GoogleTest)
+gtest_discover_tests(01TypeDeduction-Test)
