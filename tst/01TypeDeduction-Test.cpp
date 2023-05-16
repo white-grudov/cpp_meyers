@@ -1,53 +1,63 @@
 #include "gtest/gtest.h"
-#include <typeinfo>
 
 #include "01TypeDeduction.h"
 
-template<typename T>
-void testTypeDeduction(const T& value) {
-    EXPECT_EQ(typeid(value), typeid(int));
+TEST(TypeDeductionTest, TemplateDeductionByReference) {
+    int initialValue = 5;
+
+    auto x = initialValue;
+    const auto cx = x;
+
+    EXPECT_EQ(TypeDeduction::resetRef(x), -1);
+    EXPECT_EQ(TypeDeduction::resetRef(cx), initialValue);
 }
 
-TEST(TypeDeductionTest, AutoTypeDeductionTemplate) {
-    auto x = 5;
-    testTypeDeduction(x);
+TEST(TypeDeductionTest, TemplateDeductionByConstReference) {
+    int initialValue = 5;
 
-    auto& y = x;
-    testTypeDeduction(y);
+    auto x = initialValue;
+    const auto cx = x;
 
-    const auto& z = x;
-    testTypeDeduction(z);
-
-    auto&& w = 5;
-    testTypeDeduction(w);
-
-    const auto&& v = 5;
-    testTypeDeduction(v);
+    EXPECT_EQ(TypeDeduction::resetConstRef(x), initialValue);
+    EXPECT_EQ(TypeDeduction::resetConstRef(cx), initialValue);
 }
 
-TEST(TypeDeductionTest, AutoTypeFuncDeduction) {
-    auto result = TypeDeduction::add(5, 6);
+TEST(TypeDeductionTest, TemplateDeductionByUniversalReference) {
+    int initialValue = 5;
 
-    EXPECT_EQ(typeid(result), typeid(int));
-    EXPECT_EQ(result, 11);
+    auto x = initialValue;
+    const auto cx = x;
+
+    EXPECT_EQ(TypeDeduction::resetUniRef(x), -1);
+    EXPECT_EQ(TypeDeduction::resetUniRef(cx), initialValue);
 }
 
-TEST(TypeDeductionTest, AutoTypeDeduction) {
-    auto number = 42;
-    auto& ref = number;
-    const auto* ptr = &number;
+TEST(TypeDeductionTest, TemplateDeductionByValue) {
+    int initialValue = 5;
 
-    EXPECT_EQ(typeid(number), typeid(int));
-    EXPECT_EQ(typeid(ref), typeid(int&));
-    EXPECT_EQ(typeid(ptr), typeid(const int*));
+    auto x = initialValue;
+    const auto cx = x;
+
+    EXPECT_EQ(TypeDeduction::resetPlain(x), -1);
+    EXPECT_EQ(TypeDeduction::resetPlain(cx), -1);
 }
 
-TEST(TypeDeductionTest, DecltypeTypeDeduction) {
-    int a = 5;
-    double b = 3.14;
+TEST(TypeDeductionTest, AutoDeduction) {
+    int initialValue = 5;
 
-    decltype(a * b) result = TypeDeduction::multiply(a, b);
+    auto x = initialValue;
+    const auto cx = x;
 
-    EXPECT_EQ(typeid(result), typeid(double));
-    EXPECT_EQ(result, a * b);
+    EXPECT_EQ(TypeDeduction::testAuto(x), -1);
+    EXPECT_EQ(TypeDeduction::testAuto(cx), -1);
+}
+
+TEST(TypeDeductionTest, DecltypeDeduction) {
+    int initialValue = 5;
+
+    auto x = initialValue;
+    const auto cx = x;
+
+    EXPECT_EQ(TypeDeduction::testDecltype(x), -1);
+    EXPECT_EQ(TypeDeduction::testDecltype(cx), initialValue);
 }
