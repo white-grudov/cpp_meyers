@@ -2,7 +2,7 @@
 
 #include "01TypeDeduction.h"
 
-TEST(TypeDeductionTest, TemplateDeductionByReference)
+TEST(TypeDeductionTestItem1, TemplateDeductionByReference)
 {
     int initialValue = 5;
 
@@ -13,7 +13,7 @@ TEST(TypeDeductionTest, TemplateDeductionByReference)
     EXPECT_EQ(resetRef(cx), initialValue);
 }
 
-TEST(TypeDeductionTest, TemplateDeductionByConstReference)
+TEST(TypeDeductionTestItem1, TemplateDeductionByConstReference)
 {
     int initialValue = 5;
 
@@ -24,7 +24,7 @@ TEST(TypeDeductionTest, TemplateDeductionByConstReference)
     EXPECT_EQ(resetConstRef(cx), initialValue);
 }
 
-TEST(TypeDeductionTest, TemplateDeductionByUniversalReference)
+TEST(TypeDeductionTestItem1, TemplateDeductionByUniversalReference)
 {
     int initialValue = 5;
 
@@ -35,7 +35,7 @@ TEST(TypeDeductionTest, TemplateDeductionByUniversalReference)
     EXPECT_EQ(resetUniRef(cx), initialValue);
 }
 
-TEST(TypeDeductionTest, TemplateDeductionByValue)
+TEST(TypeDeductionTestItem1, TemplateDeductionByValue)
 {
     int initialValue = 5;
 
@@ -46,7 +46,7 @@ TEST(TypeDeductionTest, TemplateDeductionByValue)
     EXPECT_EQ(resetPlain(cx), -1);
 }
 
-TEST(TypeDeductionTest, AutoTypeDeduction)
+TEST(TypeDeductionTestItem2, AutoTypeDeduction)
 {
     int initialValue = 5;
 
@@ -57,7 +57,7 @@ TEST(TypeDeductionTest, AutoTypeDeduction)
     EXPECT_EQ(testAuto(cx), -1);
 }
 
-TEST(TypeDeductionTest, DecltypeDeduction)
+TEST(TypeDeductionTestItem3, DecltypeDeduction)
 {
     int initialValue = 5;
 

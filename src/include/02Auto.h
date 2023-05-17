@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdexcept>
+
 // class for testing purposes
 class Data
 {
@@ -24,31 +26,31 @@ private:
     private:
         int value_;
     public:
-        ProxyNumber(const int& value) : value_(value) {}
-        const int& getValue() const { return value_; }
+        ProxyNumber(int value) : value_(value) {}
+        int getValue() const { return value_; }
         int& getValue() { return value_; }
         
         operator OwnNumber() const
         {
             return OwnNumber(value_);
         }
-        ProxyNumber& operator++()
+        ProxyNumber& operator++() 
         {
             throw std::runtime_error("Preincrement operator not supported");
         }
     };
     int value_;
 public:
-    OwnNumber(const int& value) : value_(value) {}
-    const int& getValue() const { return value_; }
+    OwnNumber(int value) : value_(value) {}
+    int getValue() const { return value_; }
     int& getValue() { return value_; }
     
-    OwnNumber::ProxyNumber operator+(const OwnNumber& rhs) const
+    OwnNumber::ProxyNumber operator+(const OwnNumber& rhs) const noexcept 
     {
         return ProxyNumber(value_ + rhs.getValue());
     }
 
-    OwnNumber& operator++()
+    OwnNumber& operator++() noexcept 
     {
         ++value_;
         return *this;

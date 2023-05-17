@@ -1,10 +1,11 @@
 #include <iostream>
-#include <typeinfo>
 
-#include "include/01TypeDeduction.h"
+#include "include/03ModernCPP.h"
 
 int main()
 {
-    // std::cout << "test" << std::endl;
+    // CheckPointer(0); 
+    // CheckPointer(NULL);
+
     return 0;
 }

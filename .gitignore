@@ -1,3 +1,5 @@
-/.*
-/build
-/lib/googletest
+build/*
+!build/.gitkeep
+
+lib/googletest/*
+!lib/googletest/.gitkeep
