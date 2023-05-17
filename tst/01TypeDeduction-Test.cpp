@@ -2,62 +2,68 @@
 
 #include "01TypeDeduction.h"
 
-TEST(TypeDeductionTest, TemplateDeductionByReference) {
+TEST(TypeDeductionTest, TemplateDeductionByReference)
+{
     int initialValue = 5;
 
     auto x = initialValue;
     const auto cx = x;
 
-    EXPECT_EQ(TypeDeduction::resetRef(x), -1);
-    EXPECT_EQ(TypeDeduction::resetRef(cx), initialValue);
+    EXPECT_EQ(resetRef(x), -1);
+    EXPECT_EQ(resetRef(cx), initialValue);
 }
 
-TEST(TypeDeductionTest, TemplateDeductionByConstReference) {
+TEST(TypeDeductionTest, TemplateDeductionByConstReference)
+{
     int initialValue = 5;
 
     auto x = initialValue;
     const auto cx = x;
 
-    EXPECT_EQ(TypeDeduction::resetConstRef(x), initialValue);
-    EXPECT_EQ(TypeDeduction::resetConstRef(cx), initialValue);
+    EXPECT_EQ(resetConstRef(x), initialValue);
+    EXPECT_EQ(resetConstRef(cx), initialValue);
 }
 
-TEST(TypeDeductionTest, TemplateDeductionByUniversalReference) {
+TEST(TypeDeductionTest, TemplateDeductionByUniversalReference)
+{
     int initialValue = 5;
 
     auto x = initialValue;
     const auto cx = x;
 
-    EXPECT_EQ(TypeDeduction::resetUniRef(x), -1);
-    EXPECT_EQ(TypeDeduction::resetUniRef(cx), initialValue);
+    EXPECT_EQ(resetUniRef(x), -1);
+    EXPECT_EQ(resetUniRef(cx), initialValue);
 }
 
-TEST(TypeDeductionTest, TemplateDeductionByValue) {
+TEST(TypeDeductionTest, TemplateDeductionByValue)
+{
     int initialValue = 5;
 
     auto x = initialValue;
     const auto cx = x;
 
-    EXPECT_EQ(TypeDeduction::resetPlain(x), -1);
-    EXPECT_EQ(TypeDeduction::resetPlain(cx), -1);
+    EXPECT_EQ(resetPlain(x), -1);
+    EXPECT_EQ(resetPlain(cx), -1);
 }
 
-TEST(TypeDeductionTest, AutoDeduction) {
+TEST(TypeDeductionTest, AutoTypeDeduction)
+{
     int initialValue = 5;
 
     auto x = initialValue;
     const auto cx = x;
 
-    EXPECT_EQ(TypeDeduction::testAuto(x), -1);
-    EXPECT_EQ(TypeDeduction::testAuto(cx), -1);
+    EXPECT_EQ(testAuto(x), -1);
+    EXPECT_EQ(testAuto(cx), -1);
 }
 
-TEST(TypeDeductionTest, DecltypeDeduction) {
+TEST(TypeDeductionTest, DecltypeDeduction)
+{
     int initialValue = 5;
 
     auto x = initialValue;
     const auto cx = x;
 
-    EXPECT_EQ(TypeDeduction::testDecltype(x), -1);
-    EXPECT_EQ(TypeDeduction::testDecltype(cx), initialValue);
+    EXPECT_EQ(testDecltype(x), -1);
+    EXPECT_EQ(testDecltype(cx), initialValue);
 }

@@ -5,7 +5,8 @@
 
 #include "02Auto.h"
 
-TEST(AutoTest, FunctionTemplateAndAutoLambda) {
+TEST(AutoTest, FunctionDeclarationComparisonStdFunctionVsAuto)
+{
     std::function<bool(const std::unique_ptr<Data>&, const std::unique_ptr<Data>&)> compareGreaterNonAuto =
         [](const std::unique_ptr<Data>& lhs, const std::unique_ptr<Data>& rhs) { return *lhs > *rhs; };
     
@@ -27,7 +28,8 @@ TEST(AutoTest, FunctionTemplateAndAutoLambda) {
 
 // To check compatibility issues with Win64 platform
 #ifdef _WIN64
-TEST(AutoTest, VectorSizeUnsignedAndAuto) {
+TEST(AutoTest, VectorSizeAutoMismatch)
+{
     std::vector<int> vec { 1, 2, 3, 4, 5 };
 
     unsigned sizeUnsigned = vec.size();
@@ -39,7 +41,8 @@ TEST(AutoTest, VectorSizeUnsignedAndAuto) {
 }
 #endif
 
-TEST(AutoTest, ProxyTypesAutoUndefinedBehavior) {
+TEST(AutoTest, UndefinedBehaviorWithAutoAndHiddenProxyType)
+{
     OwnNumber x(5);
     OwnNumber y(2);
 
