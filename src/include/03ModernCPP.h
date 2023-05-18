@@ -292,15 +292,18 @@ constexpr int pairSum(const IntPair& pair)
  * Item 16: Make const member functions thread safe
  */
 
-class UnsafeCounter {
+class UnsafeCounter
+{
 public:
     UnsafeCounter() : count_(0) {}
 
-    int getCount() const {
+    int getCount() const
+    {
         return count_;
     }
 
-    void increment() const {
+    void increment() const
+    {
         ++count_;
     }
 
@@ -308,28 +311,31 @@ private:
     mutable int count_;
 };
 
-class SafeCounter {
+class SafeCounter
+{
+private:
+    mutable std::mutex mutex_;
+    mutable int count_;
 public:
     SafeCounter() : count_(0) {}
 
-    int getCount() const {
-        std::lock_guard<std::mutex> lock(mutex_);
+    int getCount() const
+    {
         return count_;
     }
 
-    void increment() {
+    void increment() const
+    {
         std::lock_guard<std::mutex> lock(mutex_);
         ++count_;
     }
-
-private:
-    mutable std::mutex mutex_;
-    int count_;
 };
 
 template <typename T>
-void threadFunc(T& counter, int iterations) {
-    for (int i = 0; i < iterations; ++i) {
+void threadFunc(T& counter, int iterations)
+{
+    for (int i = 0; i < iterations; ++i)
+    {
         std::this_thread::sleep_for(std::chrono::nanoseconds(1));
         counter.increment();
     }
