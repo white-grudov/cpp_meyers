@@ -4,8 +4,6 @@
 
 int main()
 {
-    // CheckPointer(0); 
-    // CheckPointer(NULL);
 
     return 0;
 }

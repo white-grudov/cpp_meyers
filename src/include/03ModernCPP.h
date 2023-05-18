@@ -6,6 +6,11 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include <numeric>
+#include <stdexcept>
+#include <random>
+#include <thread>
+#include <mutex>
 
 /*
  * Item 7: Distinguish between () and {} when creating objects
@@ -217,3 +222,135 @@ Component makeComponent()
  * Item 13: Prefer const_iterators to iterators
  */
 
+template <typename C>
+decltype(auto) findMean(const C& container)
+{
+    if (container.empty())
+    {
+        throw std::logic_error("Container is empty");
+    }
+    auto sum = std::accumulate(std::cbegin(container), std::cend(container), 0.0);
+    return sum / container.size();
+}
+
+/*
+ * Item 14: Declare functions noexcept if they won't emit exceptions
+ */
+
+void throwException()
+{
+    throw std::runtime_error("Exception");
+}
+void noThrow() noexcept
+{
+    return;
+}
+void doSmthWithFunc(auto func) noexcept(noexcept(func()))
+{
+    func();
+}
+
+/*
+ * Item 15: Use constexpr whenever possible
+ */
+
+class IntPair
+{
+private:
+    int first_;
+    int second_;
+
+    bool isExecutedCompileTime_ = false;
+public:
+    constexpr IntPair(int first, int second) : first_(first), second_(second)
+    {
+        if (std::is_constant_evaluated())
+        {
+            isExecutedCompileTime_ = true;
+        }
+    }
+    constexpr int getFirst() const noexcept { return first_; }
+    constexpr int getSecond() const noexcept { return second_; }
+
+    constexpr bool isExecutedCompileTime() const noexcept { return isExecutedCompileTime_; }
+};
+
+int getRandomInt(int min, int max)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(min, max);
+    return dis(gen);
+}
+
+constexpr int pairSum(const IntPair& pair)
+{
+    return pair.getFirst() + pair.getSecond();
+}
+
+/*
+ * Item 16: Make const member functions thread safe
+ */
+
+class UnsafeCounter {
+public:
+    UnsafeCounter() : count_(0) {}
+
+    int getCount() const {
+        return count_;
+    }
+
+    void increment() const {
+        ++count_;
+    }
+
+private:
+    mutable int count_;
+};
+
+class SafeCounter {
+public:
+    SafeCounter() : count_(0) {}
+
+    int getCount() const {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return count_;
+    }
+
+    void increment() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        ++count_;
+    }
+
+private:
+    mutable std::mutex mutex_;
+    int count_;
+};
+
+template <typename T>
+void threadFunc(T& counter, int iterations) {
+    for (int i = 0; i < iterations; ++i) {
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+        counter.increment();
+    }
+}
+
+/*
+ * Item 17: Understand special member function generation
+ */
+
+class VectorWrapper
+{
+private:
+    std::vector<int> data_;
+public:
+    // VectorWrapper() = default;
+    // VectorWrapper(const VectorWrapper&) = default;
+    // VectorWrapper(VectorWrapper&&) = default;
+    // VectorWrapper& operator=(const VectorWrapper&) = default;
+    // VectorWrapper& operator=(VectorWrapper&&) = default;
+    // ~VectorWrapper() = default;
+
+    const std::vector<int>& getData() const { return data_; }
+    std::vector<int>& getData() { return data_; }
+};
