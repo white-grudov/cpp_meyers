@@ -133,7 +133,7 @@ TEST(ModernCPPTestItem12, FunctionReferenceQualifiers)
 
     auto valuesFromLvalue = component.getValues();
     // makeComponent() returns Components with values { -1 }, 
-    // but since getValues() are called from rvalue, it is replaced with { 0 }
+    // but since getValues() is called from rvalue, it gets replaced with { 0 }
     auto valuesFromRvalue = makeComponent().getValues(); 
 
     EXPECT_EQ(valuesFromLvalue[0], 1);
