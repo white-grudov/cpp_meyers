@@ -119,4 +119,23 @@ TEST(SmartPointersItem20, LinkedListErrorHandling)
     EXPECT_THROW(emptyList.pop_front(), std::runtime_error);
 }
 
-// TODO: Pimpl (?)
+TEST(SmartPointersItem22, PimplIdiomWithUniquePtr)
+{
+    std::string lValue = "lValue";
+    Widget w1(lValue);
+
+    EXPECT_EQ(w1.getName(), lValue);
+    
+    std::string rValue = "rValue";
+    Widget w2(std::move(rValue));
+    EXPECT_EQ(w2.getName(), "rValue");
+    EXPECT_EQ(rValue, "");
+
+    Widget w3("cStr");
+    EXPECT_EQ(w3.getName(), "cStr");
+
+    w1.append(3.14);
+    EXPECT_EQ(w1[0], 3.14);
+
+    EXPECT_EQ(w1.getGadgetValue(), 0);
+}

@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 
 /*
  * Item 18: Use std::unique_ptr for exclusive-ownership resource management.
@@ -20,7 +21,6 @@ public:
     virtual ~Color() = default;
     virtual std::string toHex() const = 0;
 };
-int Color::deletedCount = 0;
 
 class RGB final : public Color
 {
@@ -407,3 +407,30 @@ bool operator!=(const LinkedList<T>& lhs, const LinkedList<T>& rhs)
 {
     return !(lhs == rhs);
 }
+
+/*
+ * Item 22: When using the Pimpl Idiom, define special member functions in the implementation file.
+ */
+
+class Widget
+{
+    struct Impl;
+    std::unique_ptr<Impl> pImpl_;
+
+public:
+    explicit Widget(std::string name);
+    Widget(const char* name);
+    ~Widget();
+    Widget(Widget&& rhs) noexcept;
+    Widget& operator=(Widget&& rhs) noexcept;
+    Widget(const Widget& rhs);
+    Widget& operator=(const Widget& rhs);
+
+    std::string getName() const;
+    void append(double value);
+    void remove();
+    double operator[](std::size_t index) const;
+    double& operator[](std::size_t index);
+
+    int getGadgetValue() const;
+};
