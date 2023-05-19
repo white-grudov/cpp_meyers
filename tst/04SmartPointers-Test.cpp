@@ -118,3 +118,5 @@ TEST(SmartPointersItem20, LinkedListErrorHandling)
     EXPECT_THROW(emptyList.pop_back(), std::runtime_error);
     EXPECT_THROW(emptyList.pop_front(), std::runtime_error);
 }
+
+// TODO: Pimpl (?)
