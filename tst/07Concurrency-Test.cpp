@@ -122,3 +122,21 @@ TEST(ConcurrencyTestItem38, PackagedTask) {
 
     EXPECT_EQ(result, 5);
 }
+
+TEST(ConcurrencyTestItem40, VolatileThreadUnsafe)
+{
+    constexpr int numTasks = 5000;
+
+    auto result = incrementVolatile(numTasks);
+
+    EXPECT_NE(result, numTasks);
+}
+
+TEST(ConcurrencyTestItem40, AtomicThreadSafe)
+{
+    constexpr int numTasks = 5000;
+
+    auto result = incrementAtomic(numTasks);
+
+    EXPECT_EQ(result, numTasks);
+}

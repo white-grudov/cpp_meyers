@@ -129,3 +129,58 @@ public:
  * Item 40: Use std::atomic for concurrency, volatile for special memory
  */
 
+int incrementVolatile(int numTasks)
+{
+    volatile int v = 0;
+    
+    std::promise<void> p;
+    std::future<void> f = p.get_future();
+
+    auto increment = [&v]() {
+        v = v + 1;
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
+    };
+
+    std::vector<std::thread> threads;
+    for (std::size_t i = 0; i < numTasks; ++i) 
+    {
+        threads.emplace_back(increment);
+    }
+
+    p.set_value();
+
+    for (auto& t : threads) 
+    {
+        t.join();
+    }
+
+    return v;
+}
+
+int incrementAtomic(int numTasks)
+{
+    std::atomic<int> v = 0;
+    
+    std::promise<void> p;
+    std::future<void> f = p.get_future();
+
+    auto increment = [&v]() {
+        ++v;
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
+    };
+
+    std::vector<std::thread> threads;
+    for (std::size_t i = 0; i < numTasks; ++i) 
+    {
+        threads.emplace_back(increment);
+    }
+
+    p.set_value();
+
+    for (auto& t : threads) 
+    {
+        t.join();
+    }
+
+    return v;
+}

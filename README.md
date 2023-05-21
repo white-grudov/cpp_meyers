@@ -3,8 +3,8 @@
 ### TODO:
 
 - [ ] Concurrency
-- - [ ] Item 39
-- - [ ] Item 40
+- - [x] Item 39
+- - [x] Item 40
 - - [ ] Composable futures
 - - [ ] Coroutines
 - [ ] Code refactoring

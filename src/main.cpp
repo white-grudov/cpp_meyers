@@ -4,13 +4,7 @@
 
 int main()
 {
-    auto tooManyThreads = []()
-    {
-        std::size_t numTasks = 50000;
-        createTasksThread(numTasks, add);
-    };
-
-    tooManyThreads();
+    std::cout << incrementVolatile(5000) << '\n';
 
     return 0;
 }
