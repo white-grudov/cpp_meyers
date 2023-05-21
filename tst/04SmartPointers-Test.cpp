@@ -48,7 +48,8 @@ TEST(SmartPointersTestItem19, SharedPtrWithCustomDelete)
     EXPECT_EQ(deletedCount, 1);
 }
 
-TEST(SmartPointersTestItem19, CreateTwoControlBlocksForOneObject) {
+TEST(SmartPointersTestItem19, CreateTwoControlBlocksForOneObject) 
+{
     auto doubleFreeSharedPtr = []()
     {
         int* ptr = new int(42);

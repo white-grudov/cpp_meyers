@@ -64,7 +64,8 @@
         "thread": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "future": "cpp"
     },
     "C_Cpp.default.cppStandard": "c++20",
     "testMate.cpp.test.advancedExecutables": [
