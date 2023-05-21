@@ -2,13 +2,14 @@
 
 ### TODO:
 
-- [ ] Item 30
-
-- [ ] Item 39
-- [ ] Item 40
-
-- [ ] Composable futures
-- [ ] Coroutines
-
-- [ ] Item 41
-- [ ] Item 42
+- [ ] Move semantics:
+- - [ ] Item 30
+- [ ] Concurrency
+- - [ ] Item 39
+- - [ ] Item 40
+- - [ ] Composable futures
+- - [ ] Coroutines
+- [ ] Tweaks
+- - [ ] Item 41
+- - [ ] Item 42
+- [ ] Code refactoring
