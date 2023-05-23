@@ -4,7 +4,7 @@
 
 TEST(TypeDeductionTestItem1, TemplateDeductionByReference)
 {
-    int initialValue = 5;
+    int initialValue { 5 };
 
     auto x = initialValue;
     const auto cx = x;
@@ -15,7 +15,7 @@ TEST(TypeDeductionTestItem1, TemplateDeductionByReference)
 
 TEST(TypeDeductionTestItem1, TemplateDeductionByConstReference)
 {
-    int initialValue = 5;
+    int initialValue { 5 };
 
     auto x = initialValue;
     const auto cx = x;
@@ -26,7 +26,7 @@ TEST(TypeDeductionTestItem1, TemplateDeductionByConstReference)
 
 TEST(TypeDeductionTestItem1, TemplateDeductionByUniversalReference)
 {
-    int initialValue = 5;
+    int initialValue { 5 };
 
     auto x = initialValue;
     const auto cx = x;
@@ -37,7 +37,7 @@ TEST(TypeDeductionTestItem1, TemplateDeductionByUniversalReference)
 
 TEST(TypeDeductionTestItem1, TemplateDeductionByValue)
 {
-    int initialValue = 5;
+    int initialValue { 5 };
 
     auto x = initialValue;
     const auto cx = x;
@@ -48,7 +48,7 @@ TEST(TypeDeductionTestItem1, TemplateDeductionByValue)
 
 TEST(TypeDeductionTestItem2, AutoTypeDeduction)
 {
-    int initialValue = 5;
+    int initialValue { 5 };
 
     auto x = initialValue;
     const auto cx = x;
@@ -59,7 +59,7 @@ TEST(TypeDeductionTestItem2, AutoTypeDeduction)
 
 TEST(TypeDeductionTestItem3, DecltypeDeduction)
 {
-    int initialValue = 5;
+    int initialValue { 5 };
 
     auto x = initialValue;
     const auto cx = x;

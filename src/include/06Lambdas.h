@@ -9,24 +9,24 @@
 
 using FilterContainer = std::vector<std::function<int(int)>>;
 
-int incrementDangleRef(int value)
+inline int incrementDangleRef(int value) noexcept
 {
     return value + 1;
 }
 
-void addFuncDangleRef(FilterContainer& filters, int num)
+inline void addFuncDangleRef(FilterContainer& filters, int num) noexcept
 {
     auto initialValue = incrementDangleRef(num);
     filters.emplace_back([&initialValue](int value) { return initialValue + value; });
 }
 
-void addFuncByValue(FilterContainer& filters, int num)
+inline void addFuncByValue(FilterContainer& filters, int num) noexcept
 {
     auto initialValue = incrementDangleRef(num);
     filters.emplace_back([=](int value) { return initialValue + value; });
 }
 
-void addFuncStatic(FilterContainer& filters, int num)
+inline void addFuncStatic(FilterContainer& filters, int num) noexcept
 {
     static auto initialValue = incrementDangleRef(num);
     filters.emplace_back([=](int value) { return initialValue + value; });
@@ -35,19 +35,19 @@ void addFuncStatic(FilterContainer& filters, int num)
 
 class DivisionHelper
 {
-    int divisor_;
+    int divisor;
 
 public:
-    DivisionHelper(int divisor) : divisor_(divisor) {}
+    DivisionHelper(int divisor) : divisor { divisor } {}
 
     void addFilterUnsafe(FilterContainer& filters)
     {
         // implicit capture of 'this' via '[=]' is deprecated in C++20
-        filters.emplace_back([=](int value) { return value / divisor_; });
+        filters.emplace_back([=](int value) { return value / divisor; });
     }
     void addFilterSafe(FilterContainer& filters)
-        {
-        filters.emplace_back([divisor = divisor_](int value) { return value / divisor; });
+    {
+        filters.emplace_back([divisor = divisor](int value) { return value / divisor; });
     }
 };
 
@@ -57,20 +57,20 @@ public:
 
 class CustomerRequest
 {
-    int id_;
-    bool isProcessed_;
-    bool isPaid_;
+    int id;
+    bool processed;
+    bool paid;
 
 public:
-    CustomerRequest(int id) : id_(id), isProcessed_(false), isPaid_(false) {}
+    CustomerRequest(int id) : id { id }, processed { false }, paid { false } {}
 
     void complete() 
     {
-        isProcessed_ = true;
-        isPaid_ = true;
+        processed = true;
+        paid = true;
     }
-    bool isProcessed() const { return isProcessed_; }
-    bool isPaid() const { return isPaid_; }
+    bool isProcessed() const { return processed; }
+    bool isPaid() const { return paid; }
 };
 
 /*
@@ -79,12 +79,12 @@ public:
 
 enum class ValueType { Lvalue, Rvalue };
 
-ValueType processValue(int& value)
+inline ValueType processValue(int& value) noexcept
 {
     return ValueType::Lvalue;
 }
 
-ValueType processValue(int&& value)
+inline ValueType processValue(int&& value) noexcept
 {
     return ValueType::Rvalue;
 }

@@ -43,8 +43,8 @@ TEST(AutoTestItem5, VectorSizeAutoMismatch)
 
 TEST(AutoTestItem6, UndefinedBehaviorWithAutoAndHiddenProxyType)
 {
-    OwnNumber x(5);
-    OwnNumber y(2);
+    OwnNumber x { 5 };
+    OwnNumber y { 2 };
 
     OwnNumber addExplicitType = x + y;
     auto addAutoType = x + y;

@@ -129,7 +129,7 @@ public:
  * Item 40: Use std::atomic for concurrency, volatile for special memory
  */
 
-int incrementVolatile(int numTasks)
+int incrementVolatile(std::size_t numTasks)
 {
     volatile int v = 0;
     
@@ -157,7 +157,7 @@ int incrementVolatile(int numTasks)
     return v;
 }
 
-int incrementAtomic(int numTasks)
+int incrementAtomic(std::size_t numTasks)
 {
     std::atomic<int> v = 0;
     

@@ -15,32 +15,32 @@ enum class CtorInvoked
 
 class CtorIndicator
 {
-    static CtorInvoked ctorInvoked_;
+    static CtorInvoked ctorInvoked;
 public:
-    static void setCtorType(CtorInvoked ctorInvoked)
+    static void setCtorType(CtorInvoked ci)
     {
-        ctorInvoked_ = ctorInvoked;
+        ctorInvoked = ci;
     }
     static CtorInvoked getCtorType()
     {
-        return ctorInvoked_;
+        return ctorInvoked;
     }
 };
-CtorInvoked CtorIndicator::ctorInvoked_ = CtorInvoked::Default;
+CtorInvoked CtorIndicator::ctorInvoked = CtorInvoked::Default;
 
 class Item
 {
-    int id_;
+    int id;
 public:
-    Item(int id) : id_(id)
+    Item(int id) : id { id }
     {
         CtorIndicator::setCtorType(CtorInvoked::Default);
     }
-    Item(const Item& other) : id_(other.id_)
+    Item(const Item& other) : id { other.id }
     {
         CtorIndicator::setCtorType(CtorInvoked::Copy);
     }
-    Item(Item&& other) : id_(other.id_)
+    Item(Item&& other) : id { other.id }
     {
         CtorIndicator::setCtorType(CtorInvoked::Move);
     }
@@ -48,26 +48,26 @@ public:
 
 class IncorrectItemContainer
 {
-    Item item_;
+    Item item;
 public:
     // const qualifier prevents move ctor from being invoked
-    IncorrectItemContainer(const Item item) : item_(std::move(item)) {}
+    IncorrectItemContainer(const Item item) : item { std::move(item) } {}
     // mistake in std::forward template type parameter
-    IncorrectItemContainer(IncorrectItemContainer&& other) : item_(std::forward<Item&>(other.item_)) {}
+    IncorrectItemContainer(IncorrectItemContainer&& other) : item { std::forward<Item&>(other.item) } {}
 };
 
 class CorrectItemContainer
 {
-    Item item_;
+    Item item;
 public:
     // Item is moved as expected
-    CorrectItemContainer(Item item) : item_(std::move(item)) {}
+    CorrectItemContainer(Item item) : item { std::move(item) } {}
 
-    // forward declataion of Item is correct, but more verbose
+    // forward declaration of Item is correct, but more verbose
     // CorrectItemContainer(CorrectItemContainer&& other) : item_(std::forward<Item>(other.item_)) {}
 
     // std::move is sufficient
-    CorrectItemContainer(CorrectItemContainer&& other) : item_(std::move(other.item_)) {}
+    CorrectItemContainer(CorrectItemContainer&& other) : item { std::move(other.item) } {}
 };
 
 /*
@@ -76,13 +76,13 @@ public:
 
 // universal reference, lvalue is passed
 template<typename T>
-bool func(T&& param)
+inline bool func(T&& param) noexcept
 {
     return false;
 }
 // rvalue argument is passed
 template<typename T>
-bool func(std::vector<T>&& param)
+inline bool func(std::vector<T>&& param) noexcept
 {
     return true;
 }
@@ -93,32 +93,32 @@ bool func(std::vector<T>&& param)
 
 class Person
 {
-    std::string name_;
+    std::string name;
 
 public:
-    Person(const std::string& name) : name_(name) {}
-    Person(const Person& other) : name_(other.name_) {}
-    Person(Person&& other) : name_(std::move(other.name_)) {}
+    Person(const std::string& name) : name { name } {}
+    Person(const Person& other) : name { other.name } {}
+    Person(Person&& other) : name { std::move(other.name) } {}
 
     Person& operator=(const Person& other)
     {
-        name_ = other.name_;
+        name = other.name;
         return *this;
     }
     Person& operator=(Person&& other)
     {
-        name_ = std::move(other.name_);
+        name = std::move(other.name);
         return *this;
     }
 
     template <typename T>
-    void setName(T&& name)
+    void setName(T&& n)
     {
-        name_ = std::forward<T>(name);
+        name = std::forward<T>(n);
     }
     const std::string& getName() const
     {
-        return name_;
+        return name;
     }
 };
 
@@ -130,24 +130,24 @@ public:
 // Tag dispatch
 
 template<typename T>
-bool processImpl(T&& param, std::false_type)
+inline bool processImpl(T&& param, std::false_type) noexcept
 {
     return false;
 }
 
 template<typename T>
-bool processImpl(T&& param, std::true_type)
+inline bool processImpl(T&& param, std::true_type) noexcept
 {
     return true;
 }
 
-std::string nameFromIdx(int idx)
+inline std::string nameFromIdx(int idx) noexcept
 {
     return "nameFromIdx";
 }
 
 template<typename T>
-bool processStrOrNumeral(T&& param)
+inline bool processStrOrNumeral(T&& param) noexcept
 {
     return processImpl(std::forward<T>(param), std::is_integral<std::remove_reference_t<T>>());
 }
@@ -159,47 +159,47 @@ enum class PersonCtorType
 
 class PersonConstrained
 {
-    std::string name_;
-    PersonCtorType ctorIndicator_;
+    std::string name;
+    PersonCtorType ctorIndicator;
 
 public:
     template<typename T, typename = std::enable_if_t<!std::is_base_of<PersonConstrained, std::decay_t<T>>::value && !std::is_integral<std::remove_reference_t<T>>::value>>
-    explicit PersonConstrained(T&& n) : name_(std::forward<T>(n))
+    explicit PersonConstrained(T&& n) : name { std::forward<T>(n) }
     {
-        ctorIndicator_ = PersonCtorType::Universal;
+        ctorIndicator = PersonCtorType::Universal;
     }
 
-    explicit PersonConstrained(int idx) : name_(nameFromIdx(idx))
+    explicit PersonConstrained(int idx) : name { nameFromIdx(idx) }
     {
-        ctorIndicator_ = PersonCtorType::Integral;
+        ctorIndicator = PersonCtorType::Integral;
     }
 
-    PersonConstrained(const PersonConstrained& other) : name_(other.name_)
+    PersonConstrained(const PersonConstrained& other) : name { other.name }
     {
-        ctorIndicator_ = PersonCtorType::Copy;
+        ctorIndicator = PersonCtorType::Copy;
     }
-    PersonConstrained(PersonConstrained&& other) : name_(std::move(other.name_))
+    PersonConstrained(PersonConstrained&& other) : name { std::move(other.name) }
     {
-        ctorIndicator_ = PersonCtorType::Move;
+        ctorIndicator = PersonCtorType::Move;
     }
 
     PersonConstrained& operator=(const PersonConstrained& other)
     {
-        name_ = other.name_;
+        name = other.name;
         return *this;
     }
     PersonConstrained& operator=(PersonConstrained&& other)
     {
-        name_ = std::move(other.name_);
+        name = std::move(other.name);
         return *this;
     }
 
-    const std::string& getName() const
+    const std::string& getName() const noexcept
     {
-        return name_;
+        return name;
     }
-    PersonCtorType getCtorIndicator() const
+    PersonCtorType getCtorIndicator() const noexcept
     {
-        return ctorIndicator_;
+        return ctorIndicator;
     }
 };

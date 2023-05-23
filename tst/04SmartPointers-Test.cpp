@@ -9,11 +9,11 @@ TEST(SmartPointersTestItem18, UniquePtrFactoryWithCustomDelete)
         auto rgb = getColorCode(255, 255, 255);
         auto cmyk = getColorCode(0, 0, 0, 0);
 
-        // smart_ptr with custom deletor has the same size as plain ptr
+        // smart_ptr with custom deleter has the same size as plain ptr
         EXPECT_EQ(sizeof(rgb), sizeof(Color*));
     }
 
-    // custom deletor modifies class variable
+    // custom deleter modifies class variable
     EXPECT_EQ(Color::deletedCount, 2);
 }
 
@@ -26,15 +26,15 @@ TEST(SmartPointersTestItem18, UniquePtrConversionToSharedPtr)
 
 TEST(SmartPointersTestItem19, SharedPtrIsTwiceTheSizeOfPtr)
 {
-    int* pInt = new int(42);
-    std::shared_ptr<int> spInt(pInt);
+    int* pInt = new int { 42 };
+    std::shared_ptr<int> spInt { pInt };
 
     EXPECT_EQ(sizeof(spInt), 2 * sizeof(pInt));
 }
 
 TEST(SmartPointersTestItem19, SharedPtrWithCustomDelete)
 {
-    std::size_t deletedCount = 0;
+    std::size_t deletedCount { 0 };
     auto delInt = [&deletedCount](int* pInt)
     {
         deletedCount++;
@@ -42,7 +42,7 @@ TEST(SmartPointersTestItem19, SharedPtrWithCustomDelete)
     };
 
     {
-        std::shared_ptr<int> spInt(nullptr, delInt);
+        std::shared_ptr<int> spInt { nullptr, delInt };
         EXPECT_EQ(deletedCount, 0);
     }
     EXPECT_EQ(deletedCount, 1);
@@ -52,10 +52,10 @@ TEST(SmartPointersTestItem19, CreateTwoControlBlocksForOneObject)
 {
     auto doubleFreeSharedPtr = []()
     {
-        int* ptr = new int(42);
+        int* ptr = new int { 42 };
 
-        std::shared_ptr<int> sharedPtr1(ptr);  
-        std::shared_ptr<int> sharedPtr2(ptr); 
+        std::shared_ptr<int> sharedPtr1 { ptr };  
+        std::shared_ptr<int> sharedPtr2 { ptr }; 
     };
 
     ASSERT_DEATH(doubleFreeSharedPtr(), "double free");
@@ -122,17 +122,17 @@ TEST(SmartPointersItem20, LinkedListErrorHandling)
 
 TEST(SmartPointersItem22, PimplIdiomWithUniquePtr)
 {
-    std::string lValue = "lValue";
-    Widget w1(lValue);
+    std::string lValue { "lValue" };
+    Widget w1 { lValue };
 
     EXPECT_EQ(w1.getName(), lValue);
     
-    std::string rValue = "rValue";
-    Widget w2(std::move(rValue));
+    std::string rValue { "rValue" };
+    Widget w2 { std::move(rValue) };
     EXPECT_EQ(w2.getName(), "rValue");
     EXPECT_EQ(rValue, "");
 
-    Widget w3("cStr");
+    Widget w3 { "cStr" };
     EXPECT_EQ(w3.getName(), "cStr");
 
     w1.append(3.14);

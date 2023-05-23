@@ -52,10 +52,10 @@ TEST(LambdasTestItem31, CaptureByValueDanglingPointer)
         auto divisorHelper = std::make_unique<DivisionHelper>(divisor);
         divisorHelper->addFilterUnsafe(filters);
     }
-    auto divident = 49;
-    auto result = filters[0](divident);
+    auto dividend = 49;
+    auto result = filters[0](dividend);
 
-    EXPECT_NE(divident / divisor, result);
+    EXPECT_NE(dividend / divisor, result);
 }
 
 TEST(LambdasTestItem31, CaptureByValueCopiedDataMember)
@@ -67,10 +67,10 @@ TEST(LambdasTestItem31, CaptureByValueCopiedDataMember)
         auto divisorHelper = std::make_unique<DivisionHelper>(divisor);
         divisorHelper->addFilterSafe(filters);
     }
-    auto divident = 49;
-    auto result = filters[0](divident);
+    auto dividend = 49;
+    auto result = filters[0](dividend);
 
-    EXPECT_EQ(divident / divisor, result);
+    EXPECT_EQ(dividend / divisor, result);
 }
 
 TEST(LambdasTestItem32, InitCapturesToMoveObject)
@@ -96,7 +96,7 @@ TEST(LambdasTestItem33, GenericLambdasAndForwarding)
 {
     auto func = [](auto&& param) { return processValue(std::forward<decltype(param)>(param)); };
 
-    auto lvalue = 42;
+    auto lvalue { 42 };
     auto lvalueResult = func(lvalue);
 
     EXPECT_EQ(ValueType::Lvalue, lvalueResult);

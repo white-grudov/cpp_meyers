@@ -9,35 +9,35 @@
 
 class Resource
 {
-    int data_;
+    int data;
 
 public:
-    std::size_t copyCount_ = 0;
-    std::size_t moveCount_ = 0;
+    std::size_t copyCount = 0;
+    std::size_t moveCount = 0;
 
-    Resource(int data) : data_(data) {}
+    Resource(int data) : data { data } {}
     
-    Resource(const Resource& other) : data_(other.data_), 
-                                      copyCount_(other.copyCount_ + 1), 
-                                      moveCount_(other.moveCount_) {}
+    Resource(const Resource& other) : data { other.data }, 
+                                      copyCount { other.copyCount + 1 }, 
+                                      moveCount { other.moveCount } {}
                                       
-    Resource(Resource&& other) noexcept : data_(other.data_),
-                                          copyCount_(other.copyCount_), 
-                                          moveCount_(other.moveCount_ + 1) {}
+    Resource(Resource&& other) noexcept : data { other.data },
+                                          copyCount { other.copyCount }, 
+                                          moveCount { other.moveCount + 1 } {}
                                           
-    Resource& operator=(const Resource& other)
+    Resource& operator=(const Resource& other) noexcept
     {
-        data_ = other.data_;
-        copyCount_ = other.copyCount_ + 1;
-        moveCount_ = other.moveCount_;
+        data = other.data;
+        copyCount = other.copyCount + 1;
+        moveCount = other.moveCount;
 
         return *this;
     }
     Resource& operator=(Resource&& other) noexcept
     {
-        data_ = other.data_;
-        copyCount_ = other.copyCount_;
-        moveCount_ = other.moveCount_ + 1;
+        data = other.data;
+        copyCount = other.copyCount;
+        moveCount = other.moveCount + 1;
 
         return *this;
     }
@@ -45,60 +45,60 @@ public:
 
 class Controller
 {
-    std::vector<Resource> resources_;
+    std::vector<Resource> resources;
 
 public:
-    void addResourceByRef(const Resource& resource)
+    void addResourceByRef(const Resource& resource) noexcept
     {
-        resources_.push_back(resource);
+        resources.push_back(resource);
     }
-    void addResourceByRef(Resource&& resource)
+    void addResourceByRef(Resource&& resource) noexcept
     {
-        resources_.push_back(std::move(resource));
+        resources.push_back(std::move(resource));
     }
 
     template<typename T, typename = std::enable_if_t<std::is_same_v<std::decay_t<T>, Resource>>>
-    void addResourceTemplate(T&& resource)
+    void addResourceTemplate(T&& resource) noexcept
     {
-        resources_.push_back(std::forward<T>(resource));
+        resources.push_back(std::forward<T>(resource));
     }
 
-    void addResourseByValue(Resource resource)
+    void addResourceByValue(Resource resource) noexcept
     {
-        resources_.push_back(std::move(resource));
+        resources.push_back(std::move(resource));
     }
 
     std::size_t copyCount() const
     {
-        return resources_[0].copyCount_;
+        return resources[0].copyCount;
     }
     std::size_t moveCount() const
     {
-        return resources_[0].moveCount_;
+        return resources[0].moveCount;
     }
 };
 
 class Container 
 {
-    Resource resource_;
+    Resource resource;
 
 public:
-    explicit Container(Resource r) : resource_(std::move(r)) {} 
-    void changeToByValue(Resource r) 
+    explicit Container(Resource r) : resource { std::move(r) } {} 
+    void changeToByValue(Resource r) noexcept
     {
-        resource_ = std::move(r); 
+        resource = std::move(r); 
     } 
-    void changeToByRef(const Resource& r) 
+    void changeToByRef(const Resource& r) noexcept
     {
-        resource_ = std::move(r); 
+        resource = std::move(r); 
     }
 
-    std::size_t copyCount() const
+    std::size_t copyCount() const noexcept
     {
-        return resource_.copyCount_;
+        return resource.copyCount;
     }
-    std::size_t moveCount() const
+    std::size_t moveCount() const noexcept
     {
-        return resource_.moveCount_;
+        return resource.moveCount;
     }
 };

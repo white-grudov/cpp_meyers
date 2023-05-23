@@ -8,41 +8,41 @@
  */
 
 // function is invoked if argument passed in template is const
-void reset(const int &value)
+inline void reset(const int &value) noexcept
 {
-    // since value is const, we cannnot reset it, hence return
+    // since value is const, we cannot reset it, hence return
     return;
 }
 // function is invoked if argument passed in template is not const
-void reset(int &value)
+inline void reset(int &value) noexcept
 {
     // since value is not const, we can reset it
     value = -1;
 }
 
 template <typename T>
-auto resetRef(T &data)
+inline auto resetRef(T &data) noexcept
 {
     reset(data);
     return data;
 }
 
 template <typename T>
-auto resetConstRef(const T &data)
+inline auto resetConstRef(const T &data) noexcept
 {
     reset(data);
     return data;
 }
 
 template <typename T>
-auto resetUniRef(T &&data)
+inline auto resetUniRef(T &&data) noexcept
 {
     reset(data);
     return data;
 }
 
 template <typename T>
-auto resetPlain(T data)
+inline auto resetPlain(T data) noexcept
 {
     reset(data);
     return data;
@@ -53,13 +53,13 @@ auto resetPlain(T data)
  */
 
 template <typename T>
-auto getAutoValue(T &value)
+inline auto getAutoValue(T &value) noexcept
 {
     return value;
 }
 
 template <typename T>
-auto testAuto(T &value)
+inline auto testAuto(T &value) noexcept
 {
     auto autoReturnValue = getAutoValue(value);
     reset(autoReturnValue);
@@ -71,13 +71,13 @@ auto testAuto(T &value)
  */
 
 template <typename T>
-decltype(auto) getDecltypeValue(T &value)
+inline decltype(auto) getDecltypeValue(T &value) noexcept
 {
     return value;
 }
 
 template <typename T>
-auto testDecltype(T &value)
+inline auto testDecltype(T &value) noexcept
 {
     auto &decltypeReturnValue = getDecltypeValue(value);
     reset(decltypeReturnValue);

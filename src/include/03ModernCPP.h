@@ -18,45 +18,43 @@
 
 class Value
 {
-private:
-    int value_;
+    int value;
 
 public:
-    Value(int value) : value_(value) {}
-    int getValue() const { return value_; }
-    int& getValue() { return value_; }
+    Value(int val) : value { val } {}
+    int getValue() const noexcept { return value; }
+    int& getValue() noexcept { return value; }
 };
 
 class ValueFlag
 {
-private:
-    int value_;
-    bool flag_;
-    std::vector<int> data_;
+    int value;
+    bool flag;
+    std::vector<int> data;
 
-    bool firstCtorCalled_ = false;
-    bool secondCtorCalled_ = false;
+    bool firstCtorCalled = false;
+    bool secondCtorCalled = false;
 public:
-    ValueFlag(int value, bool flag) : value_(value), flag_(flag), firstCtorCalled_(true) {}
-    ValueFlag(std::initializer_list<int> values) : value_(-1), flag_(false), secondCtorCalled_(true)
+    ValueFlag(int value, bool flag) : value { value }, flag { flag }, firstCtorCalled { true } {}
+    ValueFlag(std::initializer_list<int> values) : value { -1 }, flag { false }, secondCtorCalled { true }
     {
         for (const auto& value : values)
         {
-            data_.push_back(value);
+            data.push_back(value);
         }
     }
 
-    operator int() const { return value_; }
+    operator int() const noexcept { return value; }
 
-    int getValue() const { return value_; }
-    int& getValue() { return value_; }
-    bool getFlag() const { return flag_; }
-    bool& getFlag() { return flag_; }
-    const std::vector<int>& getData() const { return data_; }
-    std::vector<int>& getData() { return data_; }
+    int getValue() const noexcept { return value; }
+    int& getValue() noexcept { return value; }
+    bool getFlag() const noexcept { return flag; }
+    bool& getFlag() noexcept { return flag; }
+    const std::vector<int>& getData() const noexcept { return data; }
+    std::vector<int>& getData() noexcept { return data; }
 
-    bool isFirstCtorCalled() const { return firstCtorCalled_; }
-    bool isSecondCtorCalled() const { return secondCtorCalled_; }
+    bool isFirstCtorCalled() const noexcept { return firstCtorCalled; }
+    bool isSecondCtorCalled() const noexcept { return secondCtorCalled; }
 };
 
 /*
@@ -65,20 +63,19 @@ public:
 
 class CheckPointer
 {
-private:
-    bool isPointer_;
+    bool isPointerFlag;
 public:
-    CheckPointer(int* ptr) : isPointer_(true) {}
-    CheckPointer(int value) : isPointer_(false) {}
+    CheckPointer(int* ptr) : isPointerFlag { true } {}
+    CheckPointer(int value) : isPointerFlag { false } {}
 
-    bool isPointer() const { return isPointer_; }
+    bool isPointer() const noexcept { return isPointerFlag; }
 };
 
 /*
  * Item 9: Prefer alias declarations to typedefs
  */
 
-int increment(int x)
+inline int increment(int x) noexcept
 {
     return x + 1;
 }
@@ -116,7 +113,7 @@ namespace Enums
     };
 
     template<typename E>
-    constexpr auto getType(E enumerator) noexcept
+    inline constexpr auto getType(E enumerator) noexcept
     {
         return static_cast<std::underlying_type_t<E>>(enumerator);
     }
@@ -130,23 +127,22 @@ namespace Enums
 
 class ProcessPointerNoDelete
 {
-private:
-    bool wrongPtrType_;
+    bool wrongPtrType;
 public:
-    ProcessPointerNoDelete() : wrongPtrType_(false) {}
+    ProcessPointerNoDelete() : wrongPtrType { false } {}
 
     template <typename T>
     void takePtr(T* ptr)
     {
         if constexpr (std::is_same_v<T, void> || std::is_same_v<T, char>)
         {
-            wrongPtrType_ = true;
+            wrongPtrType = true;
             return;
         }
         // do stuff...
     }
 
-    bool isWrongPtrType() const { return wrongPtrType_; }
+    bool isWrongPtrType() const { return wrongPtrType; }
 };
 
 class ProcessPointerWithDelete
@@ -173,47 +169,44 @@ void ProcessPointerWithDelete::takePtr<char>(char*) = delete;
 
 class Base
 {
-private:
-    static constexpr int value_ = 0;
+    static constexpr int value = 0;
 public:
-    virtual int func1() const { return value_; }
-    virtual int func2(int) { return value_; }
-    virtual int func3() & { return value_; }
-    int func4() const { return value_; }
+    virtual int func1() const noexcept { return value; }
+    virtual int func2(int) noexcept { return value; }
+    virtual int func3() & noexcept { return value; }
+    int func4() const noexcept { return value; }
 };
 class ProblematicDerived : public Base
 {
-private:
-    static constexpr int value_ = 1;
+    static constexpr int value = 1;
 public:
     // overrides will cause compilation error
-    int func1() { return value_; }
-    int func2(unsigned int) { return value_; }
-    int func3() && { return value_; }
-    int func4() const { return value_; }
+    int func1() noexcept { return value; }
+    int func2(unsigned int) noexcept { return value; }
+    int func3() && noexcept { return value; }
+    int func4() const noexcept { return value; }
 };
 
 class Component
 {
-private:
-    std::vector<int> values_;
+    std::vector<int> values;
 public:
-    Component(std::initializer_list<int> values)
+    Component(std::initializer_list<int> vals)
     {
-        for (const auto& value : values)
+        for (const auto& value : vals)
         {
-            values_.push_back(value);
+            values.push_back(value);
         }
     }
-    std::vector<int> getValues() & { return values_; }
-    std::vector<int> getValues() && 
+    std::vector<int> getValues() & noexcept { return values; }
+    std::vector<int> getValues() &&
     { 
-        values_[0] = 0;
-        return std::move(values_); 
+        values[0] = 0;
+        return std::move(values); 
     }
 };
 
-Component makeComponent()
+inline Component makeComponent() noexcept
 {
     return Component { -1 };
 }
@@ -223,7 +216,7 @@ Component makeComponent()
  */
 
 template <typename C>
-decltype(auto) findMean(const C& container)
+inline decltype(auto) findMean(const C& container)
 {
     if (container.empty())
     {
@@ -237,15 +230,15 @@ decltype(auto) findMean(const C& container)
  * Item 14: Declare functions noexcept if they won't emit exceptions
  */
 
-void throwException()
+inline void throwException()
 {
     throw std::runtime_error("Exception");
 }
-void noThrow() noexcept
+inline void noThrow() noexcept
 {
     return;
 }
-void doSmthWithFunc(auto func) noexcept(noexcept(func()))
+inline void doSomethingWithFunc(auto func) noexcept(noexcept(func()))
 {
     func();
 }
@@ -256,26 +249,25 @@ void doSmthWithFunc(auto func) noexcept(noexcept(func()))
 
 class IntPair
 {
-private:
-    int first_;
-    int second_;
+    int first;
+    int second;
 
-    bool isExecutedCompileTime_ = false;
+    bool executedCompileTime = false;
 public:
-    constexpr IntPair(int first, int second) : first_(first), second_(second)
+    constexpr IntPair(int first, int second) : first { first }, second { second }
     {
         if (std::is_constant_evaluated())
         {
-            isExecutedCompileTime_ = true;
+            executedCompileTime = true;
         }
     }
-    constexpr int getFirst() const noexcept { return first_; }
-    constexpr int getSecond() const noexcept { return second_; }
+    constexpr int getFirst() const noexcept { return first; }
+    constexpr int getSecond() const noexcept { return second; }
 
-    constexpr bool isExecutedCompileTime() const noexcept { return isExecutedCompileTime_; }
+    constexpr bool isExecutedCompileTime() const noexcept { return executedCompileTime; }
 };
 
-int getRandomInt(int min, int max)
+inline int getRandomInt(int min, int max) noexcept
 {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -283,7 +275,7 @@ int getRandomInt(int min, int max)
     return dis(gen);
 }
 
-constexpr int pairSum(const IntPair& pair)
+inline constexpr int pairSum(const IntPair& pair) noexcept
 {
     return pair.getFirst() + pair.getSecond();
 }
@@ -294,45 +286,42 @@ constexpr int pairSum(const IntPair& pair)
 
 class UnsafeCounter
 {
+    mutable int count;
 public:
-    UnsafeCounter() : count_(0) {}
+    UnsafeCounter() : count { 0 } {}
 
     int getCount() const
     {
-        return count_;
+        return count;
     }
 
     void increment() const
     {
-        ++count_;
+        ++count;
     }
-
-private:
-    mutable int count_;
 };
 
 class SafeCounter
 {
-private:
-    mutable std::mutex mutex_;
-    mutable int count_;
+    mutable std::mutex mutex;
+    mutable int count;
 public:
-    SafeCounter() : count_(0) {}
+    SafeCounter() : count { 0 } {}
 
-    int getCount() const
+    int getCount() const noexcept
     {
-        return count_;
+        return count;
     }
 
-    void increment() const
+    void increment() const noexcept
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        ++count_;
+        std::lock_guard<std::mutex> lock { mutex };
+        ++count;
     }
 };
 
 template <typename T>
-void threadFunc(T& counter, int iterations)
+inline void threadFunc(T& counter, int iterations) noexcept
 {
     for (int i = 0; i < iterations; ++i)
     {
@@ -347,8 +336,7 @@ void threadFunc(T& counter, int iterations)
 
 class VectorWrapper
 {
-private:
-    std::vector<int> data_;
+    std::vector<int> data;
 public:
     // VectorWrapper() = default;
     // VectorWrapper(const VectorWrapper&) = default;
@@ -357,6 +345,6 @@ public:
     // VectorWrapper& operator=(VectorWrapper&&) = default;
     // ~VectorWrapper() = default;
 
-    const std::vector<int>& getData() const { return data_; }
-    std::vector<int>& getData() { return data_; }
+    const std::vector<int>& getData() const { return data; }
+    std::vector<int>& getData() { return data; }
 };

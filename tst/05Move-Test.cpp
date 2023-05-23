@@ -6,28 +6,28 @@
 
 TEST(MoveTestItem23, CopyCtorIsInvokedInsteadOfMove)
 {
-    Item item(42);
+    Item item { 42 };
     // copy ctor is invoked instead of move ctor because of const qualifier
-    IncorrectItemContainer itemContainer(item);
+    IncorrectItemContainer itemContainer { item };
 
     EXPECT_EQ(CtorIndicator::getCtorType(), CtorInvoked::Copy);
 }
 
 TEST(MoveTestItem23, MisuseOfForwardLeadsToCopyNotMove)
 {
-    IncorrectItemContainer itemContainer(IncorrectItemContainer(42));
+    IncorrectItemContainer itemContainer { IncorrectItemContainer { 42 } };
 
     EXPECT_EQ(CtorIndicator::getCtorType(), CtorInvoked::Copy);
 }
 
 TEST(MoveTestItem23, MoveCtorIsInvokedAsShould)
 {
-    Item item(42);
-    CorrectItemContainer itemContainer(item);
+    Item item { 42 };
+    CorrectItemContainer itemContainer { item};
 
     EXPECT_EQ(CtorIndicator::getCtorType(), CtorInvoked::Move);
 
-    CorrectItemContainer itemContainer2(CorrectItemContainer(42));
+    CorrectItemContainer itemContainer2 { CorrectItemContainer { 42 } };
 
     EXPECT_EQ(CtorIndicator::getCtorType(), CtorInvoked::Move);
 }
@@ -48,8 +48,8 @@ TEST(MoveTestItem24, RvalueIsPassed)
 
 TEST(MoveTestItem25, MoveForRvalueReference)
 {
-    Person person("Test");
-    Person movedPerson(std::move(person));
+    Person person { "Test" };
+    Person movedPerson { std::move(person) };
 
     EXPECT_EQ(movedPerson.getName(), "Test");
     EXPECT_EQ(person.getName(), "");
@@ -57,14 +57,14 @@ TEST(MoveTestItem25, MoveForRvalueReference)
 
 TEST(MoveTestItem25, ForwardForUniversalReference)
 {
-    Person person("");
+    Person person { "" };
     person.setName("CStr");
     EXPECT_EQ(person.getName(), "CStr");
 
-    person.setName(std::string("rvalueStr"));
+    person.setName(std::string { "rvalueStr" } );
     EXPECT_EQ(person.getName(), "rvalueStr");
 
-    std::string lvalueStr("lvalueStr");
+    std::string lvalueStr { "lvalueStr" };
     person.setName(lvalueStr);
     EXPECT_EQ(person.getName(), "lvalueStr");
     EXPECT_EQ(lvalueStr, "lvalueStr");
@@ -72,10 +72,10 @@ TEST(MoveTestItem25, ForwardForUniversalReference)
 
 TEST(MoveTestItem27, TagDispatchForUniversalReference)
 {
-    std::string lvalueStr("lvalueStr");
+    std::string lvalueStr { "lvalueStr" };
 
     EXPECT_FALSE(processStrOrNumeral(lvalueStr));
-    EXPECT_FALSE(processStrOrNumeral(std::string("rvalueStr")));
+    EXPECT_FALSE(processStrOrNumeral(std::string { "rvalueStr" } ));
     EXPECT_FALSE(processStrOrNumeral("cStr"));
 
     EXPECT_TRUE(processStrOrNumeral(42));
@@ -84,42 +84,42 @@ TEST(MoveTestItem27, TagDispatchForUniversalReference)
 
 TEST(MoveTestItem27, ConstrainedUniversalReferenceTemplateLvalue)
 {
-    std::string lvalueStr("lvalueStr");
+    std::string lvalueStr { "lvalueStr" };
 
-    PersonConstrained personLvalue(lvalueStr);
+    PersonConstrained personLvalue { lvalueStr };
     EXPECT_EQ(personLvalue.getName(), "lvalueStr");
     EXPECT_EQ(personLvalue.getCtorIndicator(), PersonCtorType::Universal);
 }
 
 TEST(MoveTestItem27, ConstrainedUniversalReferenceTemplateRvalue)
 {
-    PersonConstrained personRvalue(std::string("rvalueStr"));
+    PersonConstrained personRvalue { std::string { "rvalueStr" } };
     EXPECT_EQ(personRvalue.getName(), "rvalueStr");
     EXPECT_EQ(personRvalue.getCtorIndicator(), PersonCtorType::Universal);
 }
 
 TEST(MoveTestItem27, ConstrainedUniversalReferenceTemplateCStr)
 {
-    PersonConstrained personCStr("cStr");
+    PersonConstrained personCStr { "cStr" };
     EXPECT_EQ(personCStr.getName(), "cStr");
     EXPECT_EQ(personCStr.getCtorIndicator(), PersonCtorType::Universal);
 }
 
 TEST(MoveTestItem27, ConstrainedUniversalReferenceTemplateIntegral)
 {
-    PersonConstrained personInt(42);
+    PersonConstrained personInt { 42 };
     EXPECT_EQ(personInt.getName(), "nameFromIdx");
     EXPECT_EQ(personInt.getCtorIndicator(), PersonCtorType::Integral);
 
-    PersonConstrained personShort(static_cast<short>(42));
+    PersonConstrained personShort { static_cast<short>(42) };
     EXPECT_EQ(personShort.getName(), "nameFromIdx");
     EXPECT_EQ(personShort.getCtorIndicator(), PersonCtorType::Integral);
 }
 
 TEST(MoveTestItem27, ConstrainedUniversalReferenceTemplateCopy)
 {
-    PersonConstrained personForCopy("copy");
-    PersonConstrained copiedPerson(personForCopy);
+    PersonConstrained personForCopy { "copy" };
+    PersonConstrained copiedPerson { personForCopy };
     EXPECT_EQ(copiedPerson.getName(), "copy");
     EXPECT_EQ(personForCopy.getName(), "copy");
     EXPECT_EQ(copiedPerson.getCtorIndicator(), PersonCtorType::Copy);
@@ -127,8 +127,8 @@ TEST(MoveTestItem27, ConstrainedUniversalReferenceTemplateCopy)
 
 TEST(MoveTestItem27, ConstrainedUniversalReferenceTemplateMove)
 {
-    PersonConstrained personForMove("move");
-    PersonConstrained movedPerson(std::move(personForMove));
+    PersonConstrained personForMove { "move" };
+    PersonConstrained movedPerson { std::move(personForMove) };
     EXPECT_EQ(movedPerson.getName(), "move");
     EXPECT_EQ(personForMove.getName(), "");
     EXPECT_EQ(movedPerson.getCtorIndicator(), PersonCtorType::Move);

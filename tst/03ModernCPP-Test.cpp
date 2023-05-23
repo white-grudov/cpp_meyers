@@ -47,8 +47,8 @@ TEST(ModernCPPTestItem7, CopyConstructorIgnoredIfBracedInitialization)
 #ifdef _MSC_VER
 TEST(ModernCPPTestItem8, NULLDoesNotCallPointerOverload)
 {
-    CheckPointer x(NULL);
-    CheckPointer y(nullptr);
+    CheckPointer x { NULL };
+    CheckPointer y { nullptr };
 
     EXPECT_FALSE(x.isPointer());
     EXPECT_TRUE(y.isPointer());
@@ -169,16 +169,16 @@ TEST(ModernCPPTestItem14, FunctionIsNoexceptUnderCondition)
 {
     auto nonThrowingFunction = noThrow;
 
-    EXPECT_TRUE(noexcept(doSmthWithFunc(nonThrowingFunction)));
-    EXPECT_NO_THROW(doSmthWithFunc(nonThrowingFunction));
+    EXPECT_TRUE(noexcept(doSomethingWithFunc(nonThrowingFunction)));
+    EXPECT_NO_THROW(doSomethingWithFunc(nonThrowingFunction));
 }
 
 TEST(ModernCPPTestItem14, FunctionThrowsWhenConditionIsNotMet)
 {
     auto throwingFunction = throwException;
 
-    EXPECT_FALSE(noexcept(doSmthWithFunc(throwingFunction)));
-    EXPECT_THROW(doSmthWithFunc(throwingFunction), std::runtime_error);
+    EXPECT_FALSE(noexcept(doSomethingWithFunc(throwingFunction)));
+    EXPECT_THROW(doSomethingWithFunc(throwingFunction), std::runtime_error);
 }
 
 TEST(ModernCPPTestItem15, FunctionIsConstexpr)
@@ -203,7 +203,7 @@ TEST(ModernCPPTestItem15, FunctionIsExecutedAtRuntime)
 TEST(ModernCPPTestItem16, ThreadUnsafeClassWithUndefinedBehavior)
 {
     UnsafeCounter counter;
-    int iterations = 10000;
+    int iterations { 10000 };
 
     std::thread t1([&counter, iterations]() { threadFunc(counter, iterations); });
     std::thread t2([&counter, iterations]() { threadFunc(counter, iterations); });
@@ -217,7 +217,7 @@ TEST(ModernCPPTestItem16, ThreadUnsafeClassWithUndefinedBehavior)
 TEST(ModernCPPTestItem16, ThreadSafeClassWithMutex)
 {
     SafeCounter counter;
-    int iterations = 10000;
+    int iterations { 10000 };
 
     std::thread t1([&counter, iterations]() { threadFunc(counter, iterations); });
     std::thread t2([&counter, iterations]() { threadFunc(counter, iterations); });

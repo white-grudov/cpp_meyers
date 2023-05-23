@@ -24,53 +24,53 @@ public:
 
 class RGB final : public Color
 {
-    std::tuple<std::uint8_t, std::uint8_t, std::uint8_t> rgb_;
+    std::tuple<std::uint8_t, std::uint8_t, std::uint8_t> rgb;
 
 public:
-    RGB() : rgb_(0, 0, 0) {}
-    RGB(std::uint8_t r, std::uint8_t g, std::uint8_t b) : rgb_(r, g, b) {}
+    RGB() : rgb { 0, 0, 0 } {}
+    RGB(std::uint8_t r, std::uint8_t g, std::uint8_t b) : rgb { r, g, b } {}
 
     template<typename... Ts>
-    RGB(Ts&&... params) : rgb_(std::forward<Ts>(params)...) {}
+    RGB(Ts&&... params) : rgb { std::forward<Ts>(params)... } {}
 
-    std::string toHex() const override
+    std::string toHex() const noexcept override
     {
         std::stringstream ss;
         ss << "#" << std::uppercase << std::hex << std::setfill('0')
-           << std::setw(2) << static_cast<int>(std::get<0>(rgb_))
-           << std::setw(2) << static_cast<int>(std::get<1>(rgb_))
-           << std::setw(2) << static_cast<int>(std::get<2>(rgb_));
+           << std::setw(2) << static_cast<int>(std::get<0>(rgb))
+           << std::setw(2) << static_cast<int>(std::get<1>(rgb))
+           << std::setw(2) << static_cast<int>(std::get<2>(rgb));
         return ss.str();
     }
 };
 
 class CMYK final : public Color
 {
-    std::tuple<std::uint8_t, std::uint8_t, std::uint8_t, std::uint8_t> cmyk_;
+    std::tuple<std::uint8_t, std::uint8_t, std::uint8_t, std::uint8_t> cmyk;
 
 public:
-    CMYK() : cmyk_(0, 0, 0, 0) {}
-    CMYK(std::uint8_t c, std::uint8_t m, std::uint8_t y, std::uint8_t k) : cmyk_(c, m, y, k) {}
+    CMYK() : cmyk { 0, 0, 0, 0 } {}
+    CMYK(std::uint8_t c, std::uint8_t m, std::uint8_t y, std::uint8_t k) : cmyk { c, m, y, k } {}
 
     template<typename... Ts>
-    CMYK(Ts&&... params) : cmyk_(std::forward<Ts>(params)...) {}
+    CMYK(Ts&&... params) : cmyk { std::forward<Ts>(params)... } {}
 
-    std::string toHex() const override
+    std::string toHex() const noexcept override
     {
         std::stringstream hexStream;
         hexStream << '#' << std::setfill('0') << std::setw(2) << std::hex
-                << static_cast<int>(255 - std::get<0>(cmyk_))
+                << static_cast<int>(255 - std::get<0>(cmyk))
                 << std::setfill('0') << std::setw(2) << std::hex
-                << static_cast<int>(255 - std::get<1>(cmyk_))
+                << static_cast<int>(255 - std::get<1>(cmyk))
                 << std::setfill('0') << std::setw(2) << std::hex
-                << static_cast<int>(255 - std::get<2>(cmyk_));
+                << static_cast<int>(255 - std::get<2>(cmyk));
 
         return hexStream.str();
     }
 };
 
 template<typename... Ts>
-auto getColorCode(Ts&&... params)
+auto getColorCode(Ts&&... params) noexcept
 {
     auto delColor = [](Color* pColor)
     { 
@@ -80,14 +80,14 @@ auto getColorCode(Ts&&... params)
         }
         delete pColor; 
     };
-    std::unique_ptr<Color, decltype(delColor)> pColor(nullptr, delColor);
+    std::unique_ptr<Color, decltype(delColor)> pColor { nullptr, delColor };
     if constexpr (sizeof...(params) == 3)
     {
-        pColor.reset(new RGB(std::forward<Ts>(params)...));
+        pColor.reset(new RGB { std::forward<Ts>(params)... });
     }
     else if constexpr (sizeof...(params) == 4)
     {
-        pColor.reset(new CMYK(std::forward<Ts>(params)...));
+        pColor.reset(new CMYK { std::forward<Ts>(params)... });
     }
     return pColor;
 }
@@ -98,31 +98,31 @@ auto getColorCode(Ts&&... params)
 
 class Person : public std::enable_shared_from_this<Person>
 {
-    std::string name_;
-    int age_;
+    std::string name;
+    int age;
 
-    Person(const std::string& name, int age) : name_(name), age_(age) {}
+    Person(const std::string& n, int a) : name { n }, age { a } {}
 
 public:
-    static std::vector<std::shared_ptr<Person>> processed_;
+    static std::vector<std::shared_ptr<Person>> processed;
 
     Person(const Person&) = delete;
     Person(Person&&) = delete;
     const Person& operator=(const Person&) = delete;
     const Person& operator=(Person&&) = delete;
 
-    static std::shared_ptr<Person> create(const std::string& name, int age)
+    static std::shared_ptr<Person> create(const std::string& name, int age) noexcept
     {
-        return std::shared_ptr<Person>(new Person(name, age));
+        return std::shared_ptr<Person> { new Person { name, age } };
     }
 
-    void process()
+    void process() noexcept
     {
-        processed_.push_back(shared_from_this());
+        processed.push_back(shared_from_this());
     }
 
-    std::string getName() const { return name_; }
-    int getAge() const { return age_; }
+    std::string getName() const noexcept { return name; }
+    int getAge() const noexcept { return age; }
 };
 
 /*
@@ -134,19 +134,19 @@ class LinkedList
 {
     struct Node
     {
-        std::shared_ptr<Node> next_;
-        std::weak_ptr<Node> prev_;
-        T value_;
+        std::shared_ptr<Node> next;
+        std::weak_ptr<Node> prev;
+        T value;
 
-        Node(T value) : value_(value) {}
+        Node(T value) : value(value) {}
     };
 
-    std::shared_ptr<Node> head_;
-    std::shared_ptr<Node> tail_;
+    std::shared_ptr<Node> head;
+    std::shared_ptr<Node> tail;
 
 public:
-    LinkedList() : head_(nullptr), tail_(nullptr) {}
-    LinkedList(std::initializer_list<T> initList) : LinkedList()
+    LinkedList() : head { nullptr }, tail { nullptr } {}
+    LinkedList(std::initializer_list<T> initList) : LinkedList {}
     {
         for (auto value : initList)
         {
@@ -155,19 +155,19 @@ public:
     }
     LinkedList(const LinkedList& other) : LinkedList()
     {
-        for (auto node = other.head_; node != nullptr; node = node->next_)
+        for (auto node = other.head; node != nullptr; node = node->next)
         {
-            push_back(node->value_);
+            push_back(node->value);
         }
     }
-    LinkedList(LinkedList&& other) : head_(std::move(other.head_)), tail_(std::move(other.tail_)) {}
+    LinkedList(LinkedList&& other) : head(std::move(other.head)), tail(std::move(other.tail)) {}
     LinkedList& operator=(const LinkedList& other)
     {
         if (this != &other)
         {
             LinkedList temp(other);
-            std::swap(head_, temp.head_);
-            std::swap(tail_, temp.tail_);
+            std::swap(head, temp.head);
+            std::swap(tail, temp.tail);
         }
         return *this;
     }
@@ -175,128 +175,128 @@ public:
     {
         if (this != &other)
         {
-            head_ = std::move(other.head_);
-            tail_ = std::move(other.tail_);
+            head = std::move(other.head);
+            tail = std::move(other.tail);
         }
         return *this;
     }
 
     class Iterator
     {
-        std::weak_ptr<Node> current_;
+        std::weak_ptr<Node> current;
 
     public:
-        explicit Iterator(const std::shared_ptr<Node>& node) : current_(node) {}
+        explicit Iterator(const std::shared_ptr<Node>& node) : current { node } {}
 
-        T& operator*() const
+        T& operator*() const noexcept
         {
-            return current_.lock()->value_;
+            return current.lock()->value;
         }
 
-        T& operator->() const
+        T& operator->() const noexcept
         {
-            return &current_.lock()->value_;
+            return &current.lock()->value;
         }
 
-        Iterator& operator++()
+        Iterator& operator++() noexcept
         {
-            current_ = current_.lock()->next_;
+            current = current.lock()->next;
             return *this;
         }
 
-        Iterator operator++(int)
+        Iterator operator++(int) noexcept
         {
             Iterator temp(*this);
             ++(*this);
             return temp;
         }
 
-        inline operator bool() const noexcept { return !current_.expired(); }
+        inline operator bool() const noexcept { return !current.expired(); }
 
-        bool operator==(const Iterator& other) const
+        bool operator==(const Iterator& other) const noexcept
         {
-            return current_ == other.current_;
+            return current == other.current;
         }
 
-        bool operator!=(const Iterator& other) const
+        bool operator!=(const Iterator& other) const noexcept
         {
             return !(*this == other);
         }
     };
 
-    Iterator begin() const
+    Iterator begin() const noexcept
     {
-        return Iterator(head_);
+        return Iterator { head };
     }
 
-    Iterator end() const
+    Iterator end() const noexcept
     {
-        return Iterator(nullptr);
+        return Iterator { nullptr };
     }
 
-    LinkedList& push_back(const T& value)
+    LinkedList& push_back(const T& value) noexcept
     {
         auto newNode = std::make_shared<Node>(value);
-        if (head_ == nullptr)
+        if (head == nullptr)
         {
-            head_ = newNode;
-            tail_ = newNode;
+            head = newNode;
+            tail = newNode;
         }
         else
         {
-            newNode->prev_ = tail_;
-            tail_->next_ = newNode;
-            tail_ = newNode;
+            newNode->prev = tail;
+            tail->next = newNode;
+            tail = newNode;
         }
         return *this;
     }
-    LinkedList& push_front(const T& value)
+    LinkedList& push_front(const T& value) noexcept
     {
         auto newNode = std::make_shared<Node>(value);
-        if (head_ == nullptr)
+        if (head == nullptr)
         {
-            head_ = newNode;
-            tail_ = newNode;
+            head = newNode;
+            tail = newNode;
         }
         else
         {
-            newNode->next_ = head_;
-            head_->prev_ = newNode;
-            head_ = newNode;
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
         }
         return *this;
     }
     LinkedList& pop_back()
     {
-        if (tail_ == nullptr)
+        if (tail == nullptr)
         {
-            throw std::runtime_error("pop from empty list");
+            throw std::runtime_error { "pop from empty list" };
         }
-        tail_ = tail_->prev_.lock();
-        if (tail_ != nullptr)
+        tail = tail->prev.lock();
+        if (tail != nullptr)
         {
-            tail_->next_.reset();
+            tail->next.reset();
         }
         else
         {
-            head_.reset();
+            head.reset();
         }
         return *this;
     }
     LinkedList& pop_front()
     {
-        if (head_ == nullptr)
+        if (head == nullptr)
         {
             throw std::runtime_error("pop from empty list");
         }
-        head_ = head_->next_;
-        if (head_ != nullptr)
+        head = head->next;
+        if (head != nullptr)
         {
-            head_->prev_.reset();
+            head->prev.reset();
         }
         else
         {
-            tail_.reset();
+            tail.reset();
         }
         return *this;
     }
@@ -318,15 +318,15 @@ public:
         }
 
         auto newNode = std::make_shared<Node>(value);
-        auto node = head_;
+        auto node = head;
         for (std::size_t i = 0; i < pos; ++i)
         {
-            node = node->next_;
+            node = node->next;
         }
-        newNode->next_ = node;
-        newNode->prev_ = node->prev_;
-        node->prev_.lock()->next_ = newNode;
-        node->prev_ = newNode;
+        newNode->next = node;
+        newNode->prev = node->prev;
+        node->prev.lock()->next = newNode;
+        node->prev = newNode;
 
         return *this;
     }
@@ -347,42 +347,42 @@ public:
             throw std::out_of_range("index out of range");
         }
 
-        auto node = head_;
+        auto node = head;
         for (std::size_t i = 0; i < pos; ++i)
         {
-            node = node->next_;
+            node = node->next;
         }
-        node->prev_.lock()->next_ = node->next_;
-        node->next_->prev_ = node->prev_;
+        node->prev.lock()->next = node->next;
+        node->next->prev = node->prev;
 
         return *this;
     }
 
-    inline std::size_t size() const
+    std::size_t size() const noexcept
     {
         std::size_t size = 0;
-        for (auto node = head_; node != nullptr; node = node->next_)
+        for (auto node = head; node != nullptr; node = node->next)
         {
             ++size;
         }
         return size;
     }
 
-    inline bool empty() const
+    bool empty() const noexcept
     {
-        return head_ == nullptr;
+        return head == nullptr;
     }
 
-    inline LinkedList& erase() noexcept
+    LinkedList& erase() noexcept
     {
-        head_.reset();
-        tail_.reset();
+        head.reset();
+        tail.reset();
         return *this;
     }
 };
 
 template <typename T>
-bool operator==(const LinkedList<T>& lhs, const LinkedList<T>& rhs)
+inline bool operator==(const LinkedList<T>& lhs, const LinkedList<T>& rhs) noexcept
 {
     if (lhs.size() != rhs.size())
     {
@@ -403,7 +403,7 @@ bool operator==(const LinkedList<T>& lhs, const LinkedList<T>& rhs)
 }
 
 template <typename T>
-bool operator!=(const LinkedList<T>& lhs, const LinkedList<T>& rhs)
+inline bool operator!=(const LinkedList<T>& lhs, const LinkedList<T>& rhs) noexcept
 {
     return !(lhs == rhs);
 }
@@ -415,7 +415,7 @@ bool operator!=(const LinkedList<T>& lhs, const LinkedList<T>& rhs)
 class Widget
 {
     struct Impl;
-    std::unique_ptr<Impl> pImpl_;
+    std::unique_ptr<Impl> pImpl;
 
 public:
     explicit Widget(std::string name);
@@ -426,11 +426,11 @@ public:
     Widget(const Widget& rhs);
     Widget& operator=(const Widget& rhs);
 
-    std::string getName() const;
-    void append(double value);
-    void remove();
-    double operator[](std::size_t index) const;
-    double& operator[](std::size_t index);
+    std::string getName() const noexcept;
+    void append(double value) noexcept;
+    void remove() noexcept;
+    double operator[](std::size_t index) const noexcept;
+    double& operator[](std::size_t index) noexcept;
 
-    int getGadgetValue() const;
+    int getGadgetValue() const noexcept;
 };

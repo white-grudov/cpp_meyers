@@ -13,14 +13,14 @@ struct Widget::Impl
     Gadget gadget;
 };
 
-Widget::Widget(std::string name) : pImpl_(std::make_unique<Impl>())
+Widget::Widget(std::string name) : pImpl(std::make_unique<Impl>())
 {
-    pImpl_->name = std::move(name);
+    pImpl->name = std::move(name);
 }
 
-Widget::Widget(const char* name) : pImpl_(std::make_unique<Impl>())
+Widget::Widget(const char* name) : pImpl(std::make_unique<Impl>())
 {
-    pImpl_->name = name;
+    pImpl->name = name;
 }
 
 Widget::~Widget() = default;
@@ -29,41 +29,41 @@ Widget::Widget(Widget&& rhs) noexcept = default;
 
 Widget& Widget::operator=(Widget&& rhs) noexcept = default;
 
-Widget::Widget(const Widget& rhs) : pImpl_(std::make_unique<Impl>(*rhs.pImpl_)) {}
+Widget::Widget(const Widget& rhs) : pImpl { std::make_unique<Impl>(*rhs.pImpl) } {}
 
 Widget& Widget::operator=(const Widget& rhs)
 {
-    pImpl_ = std::make_unique<Impl>(*rhs.pImpl_);
+    pImpl = std::make_unique<Impl>(*rhs.pImpl);
     return *this;
 }
 
-std::string Widget::getName() const
+std::string Widget::getName() const noexcept
 {
-    return pImpl_->name;
+    return pImpl->name;
 }
 
-void Widget::append(double value)
+void Widget::append(double value) noexcept
 {
-    pImpl_->data.push_back(value);
+    pImpl->data.push_back(value);
 }
 
-void Widget::remove()
+void Widget::remove() noexcept
 {
-    if (!pImpl_->data.empty())
-        pImpl_->data.pop_back();
+    if (!pImpl->data.empty())
+        pImpl->data.pop_back();
 }
 
-double Widget::operator[](std::size_t index) const
+double Widget::operator[](std::size_t index) const noexcept
 {
-    return pImpl_->data[index];
+    return pImpl->data[index];
 }
 
-double& Widget::operator[](std::size_t index)
+double& Widget::operator[](std::size_t index) noexcept
 {
-    return pImpl_->data[index];
+    return pImpl->data[index];
 }
 
-int Widget::getGadgetValue() const
+int Widget::getGadgetValue() const noexcept
 {
-    return pImpl_->gadget.getValue();
+    return pImpl->gadget.getValue();
 }

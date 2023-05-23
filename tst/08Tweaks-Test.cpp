@@ -4,12 +4,12 @@
 
 TEST(TweaksItem41, PassValueByReferenceOverload)
 {
-    Resource r(42);
+    Resource r { 42 };
 
     Controller c1, c2, c3;
     c1.addResourceByRef(r);
     c2.addResourceByRef(std::move(r));
-    c3.addResourceByRef(Resource(42));
+    c3.addResourceByRef(Resource { 42 });
 
     EXPECT_EQ(1, c1.copyCount());
     EXPECT_EQ(0, c1.moveCount());
@@ -23,12 +23,12 @@ TEST(TweaksItem41, PassValueByReferenceOverload)
 
 TEST(TweaksItem41, PassValueByUniversalRefTemplate)
 {
-    Resource r(42);
+    Resource r { 42 };
 
     Controller c1, c2, c3;
     c1.addResourceTemplate(r);
     c2.addResourceTemplate(std::move(r));
-    c3.addResourceTemplate(Resource(42));
+    c3.addResourceTemplate(Resource { 42 });
 
     EXPECT_EQ(1, c1.copyCount());
     EXPECT_EQ(0, c1.moveCount());
@@ -42,12 +42,12 @@ TEST(TweaksItem41, PassValueByUniversalRefTemplate)
 
 TEST(TweaksItem41, PassValueByValue)
 {
-    Resource r(42);
+    Resource r { 42 };
 
     Controller c1, c2, c3;
-    c1.addResourseByValue(r);
-    c2.addResourseByValue(std::move(r));
-    c3.addResourseByValue(Resource(42));
+    c1.addResourceByValue(r);
+    c2.addResourceByValue(std::move(r));
+    c3.addResourceByValue(Resource { 42 });
 
     EXPECT_EQ(1, c1.copyCount());
     EXPECT_EQ(1, c1.moveCount());
@@ -79,22 +79,22 @@ TEST(TweaksItem41, AssignByValue)
     EXPECT_EQ(1, c.moveCount());
 }
 
-TEST(TweaksItem42, ContainterInsertion)
+TEST(TweaksItem42, ContainerInsertion)
 {
     std::vector<Resource> resources;
 
-    resources.push_back(Resource(42));
+    resources.push_back(Resource { 42 });
 
-    EXPECT_EQ(0, resources[0].copyCount_);
-    EXPECT_EQ(1, resources[0].moveCount_);
+    EXPECT_EQ(0, resources[0].copyCount);
+    EXPECT_EQ(1, resources[0].moveCount);
 }
 
-TEST(TweaksItem42, ContainterEmplacement)
+TEST(TweaksItem42, ContainerEmplacement)
 {
     std::vector<Resource> resources;
 
     resources.emplace_back(42);
 
-    EXPECT_EQ(0, resources[0].copyCount_);
-    EXPECT_EQ(0, resources[0].moveCount_);
+    EXPECT_EQ(0, resources[0].copyCount);
+    EXPECT_EQ(0, resources[0].moveCount);
 }

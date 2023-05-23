@@ -2,9 +2,4 @@
 
 ### TODO:
 
-- [ ] Concurrency
-- - [x] Item 39
-- - [x] Item 40
-- - [ ] Composable futures
-- - [ ] Coroutines
-- [ ] Code refactoring
+- [ ] Revisit Chapter 7 Concurrency

@@ -6,53 +6,53 @@
 class Data
 {
 private:
-    int value_;
+    int value;
 public:
-    Data(const int& value) : value_(value) {}
-    const int& getValue() const { return value_; }
-    int& getValue() { return value_; }
+    Data(const int& val) : value { val } {}
+    const int& getValue() const noexcept { return value; }
+    int& getValue() noexcept { return value; }
 };
 
-bool operator>(const Data& lhs, const Data& rhs)
+bool operator>(const Data& lhs, const Data& rhs) noexcept
 {
     return lhs.getValue() > rhs.getValue();
 }
 
 class OwnNumber
 {
-private:
+    int value;
+
     class ProxyNumber
     {
     private:
-        int value_;
+        int value;
     public:
-        ProxyNumber(int value) : value_(value) {}
-        int getValue() const { return value_; }
-        int& getValue() { return value_; }
+        ProxyNumber(int val) : value { val } {}
+        int getValue() const noexcept { return value; }
+        int& getValue() noexcept { return value; }
         
-        operator OwnNumber() const
+        operator OwnNumber() const noexcept
         {
-            return OwnNumber(value_);
+            return OwnNumber { value };
         }
         ProxyNumber& operator++() 
         {
-            throw std::runtime_error("Preincrement operator not supported");
+            throw std::runtime_error { "Preincrement operator not supported" };
         }
     };
-    int value_;
 public:
-    OwnNumber(int value) : value_(value) {}
-    int getValue() const { return value_; }
-    int& getValue() { return value_; }
+    OwnNumber(int val) : value { val } {}
+    int getValue() const noexcept { return value; }
+    int& getValue() noexcept { return value; }
     
     OwnNumber::ProxyNumber operator+(const OwnNumber& rhs) const noexcept 
     {
-        return ProxyNumber(value_ + rhs.getValue());
+        return ProxyNumber { value + rhs.getValue() };
     }
 
     OwnNumber& operator++() noexcept 
     {
-        ++value_;
+        ++value;
         return *this;
     }
 };
